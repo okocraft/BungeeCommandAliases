@@ -1,0 +1,2 @@
+# BungeeCommandAliases
+Bukkitにおけるコマンドの別名機能（commands.ymlのやつ）をBungeecordに追加するplugin
