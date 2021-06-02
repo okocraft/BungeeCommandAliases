@@ -71,11 +71,13 @@ public class CommandAlias extends Command implements TabExecutor {
         List<String> completion = new ArrayList<>();
 
         for (String child : getReplacedChildren(Arrays.copyOfRange(args, 0, args.length - 1), true)) {
-            plugin.getProxy().getPluginManager().dispatchCommand(
-                sender,
-                child.replaceAll("(?<!\\\\)\\$\\$?" + args.length + ".*", "") + args[args.length - 1],
-                completion
-            );
+            if (child.matches(".*(?<!\\\\)\\$\\$?" + args.length + ".*")) {
+                plugin.getProxy().getPluginManager().dispatchCommand(
+                    sender,
+                    child.replaceAll("(?<!\\\\)\\$\\$?" + args.length + ".*", "") + args[args.length - 1],
+                    completion
+                );
+            }
         }
 
         return completion;
