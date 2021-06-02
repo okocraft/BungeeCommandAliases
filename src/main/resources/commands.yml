@@ -1,0 +1,13 @@
+# This is the commands configuration file for Bungeecord.
+# This plugin is implemented like bukkit's commands aliases. It is the same as
+# syntax for bukkit's commands.yml file.
+# For documentation on how to make use of this file, check out the Bukkit Wiki at
+# https://www.spigotmc.org/go/commands-yml 
+# 
+# Do not ask spigot team or something about this plugin
+# 
+# Bug tracker: https://github.com/okocraft/BungeeCommandAliases/issues
+
+aliases:
+  icanhasbungee:
+  - bungee $1-

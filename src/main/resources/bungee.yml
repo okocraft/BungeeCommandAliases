@@ -1,0 +1,4 @@
+name: BungeeCommandAliases
+version: ${project.version}
+main: net.okocraft.bungeecommandaliases.Main
+author: lazy_gon
