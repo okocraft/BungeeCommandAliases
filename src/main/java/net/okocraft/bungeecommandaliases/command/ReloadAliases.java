@@ -20,6 +20,7 @@ public class ReloadAliases extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (plugin.isAliasesLoaded()) {
+            plugin.getCommandConfig().reload();
             plugin.onDisable();
             plugin.onEnable();
             sender.sendMessage(new TextComponent(ChatColor.GREEN + "Bungeecord command aliases successfully reloaded."));
