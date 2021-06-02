@@ -16,37 +16,37 @@ public class CommandConfig extends CustomConfig {
         super(plugin, "commands.yml");
     }
 
-    public List<String> getAliases(String command) {
-        return getCommandAliasesMap().getOrDefault(
-            command.toLowerCase(Locale.ROOT),
+    public List<String> getChildren(String alias) {
+        return getAliasesMap().getOrDefault(
+            alias.toLowerCase(Locale.ROOT),
             Collections.unmodifiableList(new ArrayList<>())
         );
     }
 
-    public Map<String, List<String>> getCommandAliasesMap() {
+    public Map<String, List<String>> getAliasesMap() {
         Map<String, List<String>> result = new HashMap<>();
         Configuration aliasesSection = get().getSection("aliases");
         if (aliasesSection == null) {
             return result;
         }
 
-        for (String command : aliasesSection.getKeys()) {
-            List<String> aliases = new ArrayList<>();
+        for (String alias : aliasesSection.getKeys()) {
+            List<String> children = new ArrayList<>();
             
-            Object alias = aliasesSection.get(command.toLowerCase(Locale.ROOT));
+            Object value = aliasesSection.get(alias.toLowerCase(Locale.ROOT));
 
-            if (alias instanceof String) {
-                aliases.add((String) alias);
+            if (value instanceof String) {
+                children.add((String) value);
 
-            } else if (alias instanceof List) {
-                for (Object element : (List<?>) alias) {
+            } else if (value instanceof List) {
+                for (Object element : (List<?>) value) {
                     if (element instanceof String) {
-                        aliases.add((String) element);
+                        children.add((String) element);
                     }
                 }
             }
 
-            result.put(command.toLowerCase(Locale.ROOT), Collections.unmodifiableList(aliases));
+            result.put(alias.toLowerCase(Locale.ROOT), Collections.unmodifiableList(children));
         }
 
         return result;

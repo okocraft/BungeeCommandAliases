@@ -60,7 +60,8 @@ public class Main extends Plugin {
         }
 
         commandConfig.saveDefault();
-        for (String aliasName : commandConfig.getCommandAliasesMap().keySet()) {
+        Map<String, List<String>> aliasesMap = commandConfig.getAliasesMap();
+        for (String aliasName : aliasesMap.keySet()) {
             CommandAlias alias = new CommandAlias(this, aliasName);
             commandAliases.put(aliasName, alias);
             if (registeredCommands.containsKey(aliasName)) {

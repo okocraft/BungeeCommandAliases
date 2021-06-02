@@ -20,52 +20,52 @@ public class CommandAlias extends Command implements TabExecutor {
         this.plugin = plugin;
     }
 
-    private List<String> getReplacedCommands(String[] args, boolean forTabcompletion) throws IllegalArgumentException {
-        List<String> realCommands = new ArrayList<>(plugin.getCommandConfig().getAliases(getName()));
-        if (realCommands.isEmpty()) {
+    private List<String> getReplacedChildren(String[] args, boolean forTabcompletion) throws IllegalArgumentException {
+        List<String> children = new ArrayList<>(plugin.getCommandConfig().getChildren(getName()));
+        if (children.isEmpty()) {
             return new ArrayList<>();
         }
         
-        for (int realCommandIndex = 0; realCommandIndex < realCommands.size(); realCommandIndex++) {
-            String realCommand = realCommands.get(realCommandIndex);
+        for (int childIndex = 0; childIndex < children.size(); childIndex++) {
+            String child = children.get(childIndex);
             for (int argIndex = 0; argIndex < args.length; argIndex++) {
                 // extract `$x-` to `$x $x+1-` or `$$x-` to `$$x $x+1-`
                 // if it is for tabcomplete, even on the last argument, `$x+1-` will be added.
                 if (forTabcompletion || argIndex != args.length - 1) {
-                    realCommand = realCommand.replaceAll("(((?<!\\\\)\\$)\\$?" + (argIndex + 1) + ")-", "$1 $2" + (argIndex + 2) + "-");
+                    child = child.replaceAll("(((?<!\\\\)\\$)\\$?" + (argIndex + 1) + ")-", "$1 $2" + (argIndex + 2) + "-");
                 } else {
-                    realCommand = realCommand.replaceAll("(((?<!\\\\)\\$\\$?)" + (argIndex + 1) + ")-", "$1");
+                    child = child.replaceAll("(((?<!\\\\)\\$\\$?)" + (argIndex + 1) + ")-", "$1");
                 }
                 
                 // finally `$x`s are replaced with input args, but `$x-` are not.
-                realCommand = realCommand.replaceAll("(?<!\\\\)\\$\\$?" + (argIndex + 1) + "(?!-)", args[argIndex]);
+                child = child.replaceAll("(?<!\\\\)\\$\\$?" + (argIndex + 1) + "(?!-)", args[argIndex]);
             }
 
             // if it is not tabcomplete and there are `$$x`s throw exception.
-            if (!forTabcompletion && realCommand.matches(".*(?<!\\\\)\\$\\$(\\d+).*")) {
-                throw new IllegalArgumentException("Missing required argument " + realCommand.replaceAll(".*(?<!\\\\)\\$\\$(\\d+).*", "$1"));
+            if (!forTabcompletion && child.matches(".*(?<!\\\\)\\$\\$(\\d+).*")) {
+                throw new IllegalArgumentException("Missing required argument " + child.replaceAll(".*(?<!\\\\)\\$\\$(\\d+).*", "$1"));
             }
-            realCommands.set(realCommandIndex, realCommand);
+            children.set(childIndex, child);
         }
 
-        return realCommands;
+        return children;
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        List<String> commandLines;
+        List<String> children;
         try {
-            commandLines = getReplacedCommands(args, false);
+            children = getReplacedChildren(args, false);
         } catch (IllegalArgumentException e) {
             sender.sendMessage(new TextComponent(e.getMessage()));
             return;
         }
 
-        for (String commandLine : commandLines) {
-            if (commandLine.split(" ", -1)[0].equals(getName())) {
+        for (String child : children) {
+            if (child.split(" ", -1)[0].equals(getName())) {
                 throw new IllegalStateException("Alias is looping: " + getName());
             } else {
-                plugin.getProxy().getPluginManager().dispatchCommand(sender, commandLine.replaceAll("(?<!\\\\)\\$(\\d+)-?", ""));
+                plugin.getProxy().getPluginManager().dispatchCommand(sender, child.replaceAll("(?<!\\\\)\\$(\\d+)-?", ""));
             }
         }
     }
@@ -74,11 +74,11 @@ public class CommandAlias extends Command implements TabExecutor {
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         List<String> completion = new ArrayList<>();
 
-        for (String commandLine : getReplacedCommands(Arrays.copyOfRange(args, 0, args.length - 1), true)) {
-            if (!commandLine.split(" ", -1)[0].equals(getName())) {
+        for (String child : getReplacedChildren(Arrays.copyOfRange(args, 0, args.length - 1), true)) {
+            if (!child.split(" ", -1)[0].equals(getName())) {
                 plugin.getProxy().getPluginManager().dispatchCommand(
                     sender,
-                    commandLine.replaceAll("(?<!\\\\)\\$\\$?" + args.length + ".*", ""),
+                    child.replaceAll("(?<!\\\\)\\$\\$?" + args.length + ".*", ""),
                     completion
                 );
             }
