@@ -76,6 +76,33 @@ public class Main extends Plugin {
             }
         }
 
+        Map<String, List<String>> invalidAliasesAndChildren = new HashMap<>();
+        for (String aliasName : commandAliases.keySet()) {
+            List<String> invalidChildren = new ArrayList<>();
+            invalidChildren.addAll(getLoopingRecursiveAlias(aliasName, aliasesMap));
+            
+            List<String> childNames = new ArrayList<>(aliasesMap.get(aliasName));
+            childNames.replaceAll(child -> child.split(" ", -1)[0]);
+            invalidChildren.retainAll(childNames);
+            invalidChildren.remove(aliasName);
+
+            for (String child : aliasesMap.get(aliasName)) {
+                String childName = child.split(" ", -1)[0];
+                if (!invalidChildren.contains(childName) && !getProxy().getPluginManager().isExecutableCommand(childName, getProxy().getConsole())) {
+                    invalidChildren.add(childName);
+                }
+            }
+
+            if (!invalidChildren.isEmpty()) {
+                invalidAliasesAndChildren.put(aliasName, invalidChildren);
+            }
+        }
+        for (String invalidAlias : invalidAliasesAndChildren.keySet()) {
+            String invalidChildren = String.join(", ", invalidAliasesAndChildren.get(invalidAlias).toArray(String[]::new));
+            getLogger().warning("Could not register alias " + invalidAlias + " because it contains commands that do not exist: " + invalidChildren);
+            commandAliases.remove(invalidAlias);
+        }
+
         if (aliasesLoaded) {
             commandAliases.forEach((aliasName, alias) -> getProxy().getPluginManager().registerCommand(this, alias));
         } else {
@@ -85,6 +112,42 @@ public class Main extends Plugin {
             }, 20L, TimeUnit.SECONDS);
             aliasesLoaded = true;
         }
+    }
+
+    private List<String> getLoopingRecursiveAlias(String aliasName, Map<String, List<String>> aliasesMap) {
+        return getLoopingRecursiveAlias0(aliasName, new ArrayList<>(), -1, aliasesMap);
+    }
+
+    private List<String> getLoopingRecursiveAlias0(String aliasName, List<String> parents, int lastJunctionIndex, Map<String, List<String>> aliasesMap) {
+        List<String> children = new ArrayList<>(aliasesMap.get(aliasName));
+        children.replaceAll(child -> child.split(" ", -1)[0]);
+        children.removeIf(child -> !aliasesMap.containsKey(child));
+
+        if (!children.isEmpty()) {
+            if (parents.contains(aliasName)) {
+                return parents;
+            }
+            parents.add(aliasName);
+            if (children.size() > 1) {
+                lastJunctionIndex = parents.size() - 1;
+            }
+            aliasName = children.get(0);
+
+        } else {
+            if (lastJunctionIndex == -1) {
+                return new ArrayList<>();
+            }
+
+            children = new ArrayList<>(aliasesMap.get(parents.get(lastJunctionIndex)));
+            children.replaceAll(child -> child.split(" ", -1)[0]);
+            children.removeIf(child -> !aliasesMap.containsKey(child));
+            children.remove(parents.get(lastJunctionIndex + 1));
+
+            aliasName = children.get(0);
+            parents = new ArrayList<>(parents.subList(0, lastJunctionIndex + 1));
+        }
+
+        return getLoopingRecursiveAlias0(aliasName, parents, lastJunctionIndex, aliasesMap);
     }
 
     public void disableAlias(String aliasName) {
