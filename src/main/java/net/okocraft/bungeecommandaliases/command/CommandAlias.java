@@ -62,11 +62,9 @@ public class CommandAlias extends Command implements TabExecutor {
         }
 
         for (String child : children) {
-            if (child.split(" ", -1)[0].equals(getName())) {
-                throw new IllegalStateException("Alias is looping: " + getName());
-            } else {
-                plugin.getProxy().getPluginManager().dispatchCommand(sender, child.replaceAll("(?<!\\\\)\\$(\\d+)-?", ""));
-            }
+            String command = child.replaceAll("(?<!\\\\)\\$(\\d+)-?", "");
+            Main.debug(command);
+            plugin.getProxy().getPluginManager().dispatchCommand(sender, command);
         }
     }
 
@@ -75,13 +73,11 @@ public class CommandAlias extends Command implements TabExecutor {
         List<String> completion = new ArrayList<>();
 
         for (String child : getReplacedChildren(Arrays.copyOfRange(args, 0, args.length - 1), true)) {
-            if (!child.split(" ", -1)[0].equals(getName())) {
-                plugin.getProxy().getPluginManager().dispatchCommand(
-                    sender,
-                    child.replaceAll("(?<!\\\\)\\$\\$?" + args.length + ".*", ""),
-                    completion
-                );
-            }
+            plugin.getProxy().getPluginManager().dispatchCommand(
+                sender,
+                child.replaceAll("(?<!\\\\)\\$\\$?" + args.length + ".*", ""),
+                completion
+            );
         }
 
         return completion;
