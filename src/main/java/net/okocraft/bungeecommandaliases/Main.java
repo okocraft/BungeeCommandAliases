@@ -5,7 +5,9 @@ import net.okocraft.bungeecommandaliases.command.ReloadAliases;
 import net.okocraft.bungeecommandaliases.config.CommandConfig;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +18,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 
 public class Main extends Plugin {
+
+    private boolean aliasesLoaded = false;
 
     private final CommandConfig commandConfig;
 
@@ -70,13 +74,17 @@ public class Main extends Plugin {
                     Map.entry(getOwningPlugin(registeredCommands.get(aliasName)), registeredCommands.get(aliasName))
                 );
             }
-            getProxy().getPluginManager().registerCommand(this, alias);
         }
 
-        // prevent confliction with other plugin command with the same name.
-        getProxy().getScheduler().schedule(this, () -> {
+        if (aliasesLoaded) {
             commandAliases.forEach((aliasName, alias) -> getProxy().getPluginManager().registerCommand(this, alias));
-        }, 20L, TimeUnit.SECONDS);
+        } else {
+            // prevent confliction with other plugin command with the same name.
+            getProxy().getScheduler().schedule(this, () -> {
+                    commandAliases.forEach((aliasName, alias) -> getProxy().getPluginManager().registerCommand(this, alias));
+            }, 20L, TimeUnit.SECONDS);
+            aliasesLoaded = true;
+        }
     }
 
     public void disableAlias(String aliasName) {
