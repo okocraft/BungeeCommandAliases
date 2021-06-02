@@ -65,7 +65,7 @@ public class CommandAlias extends Command implements TabExecutor {
             if (commandLine.split(" ", -1)[0].equals(getName())) {
                 throw new IllegalStateException("Alias is looping: " + getName());
             } else {
-                plugin.getProxy().getPluginManager().dispatchCommand(sender, commandLine);
+                plugin.getProxy().getPluginManager().dispatchCommand(sender, commandLine.replaceAll("(?<!\\\\)\\$(\\d+)-?", ""));
             }
         }
     }
