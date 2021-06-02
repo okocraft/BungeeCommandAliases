@@ -50,6 +50,10 @@ public class Main extends Plugin {
         return aliasesLoaded;
     }
 
+    private void setAliasesLoaded(boolean aliasesLoaded) {
+        this.aliasesLoaded = aliasesLoaded;
+    }
+
     public Main() {
         commandConfig = new CommandConfig(this);
         reloadCommand = new ReloadAliases(this);
@@ -112,8 +116,8 @@ public class Main extends Plugin {
             // prevent confliction with other plugin command with the same name.
             getProxy().getScheduler().schedule(this, () -> {
                     commandAliases.forEach((aliasName, alias) -> getProxy().getPluginManager().registerCommand(this, alias));
+                    setAliasesLoaded(true);
             }, 10L, TimeUnit.SECONDS);
-            aliasesLoaded = true;
         }
     }
 
