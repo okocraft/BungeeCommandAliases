@@ -12,8 +12,6 @@ import net.okocraft.bungeecommandaliases.Main;
 
 public class CommandConfig extends CustomConfig {
 
-    private Map<String, List<String>> aliasMap;
-
     public CommandConfig(Main plugin) {
         super(plugin, "commands.yml");
     }
@@ -26,10 +24,6 @@ public class CommandConfig extends CustomConfig {
     }
 
     public Map<String, List<String>> getCommandAliasesMap() {
-        if (aliasMap != null) {
-            return aliasMap;
-        }
-
         Map<String, List<String>> result = new HashMap<>();
         Configuration aliasesSection = get().getSection("aliases");
         if (aliasesSection == null) {
@@ -55,7 +49,6 @@ public class CommandConfig extends CustomConfig {
             result.put(command.toLowerCase(Locale.ROOT), Collections.unmodifiableList(aliases));
         }
 
-        aliasMap = result;
-        return aliasMap;
+        return result;
     }
 }
