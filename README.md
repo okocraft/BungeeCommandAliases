@@ -1,6 +1,8 @@
 # BungeeCommandAliases
 Bukkitにおけるコマンドの別名機能（commands.ymlのやつ）をBungeecordに追加するplugin
 
+ダウンロードは[ここ](https://github.com/okocraft/BungeeCommandAliases/releases)で一番新しいやつを選択してください。
+
 pluginsにjarをドロップして、起動するとpluginsフォルダ内にBungeeCommandAliases/commands.ymlが生成されるので、[このページ](https://www.spigotmc.org/go/commands-yml)などを参考にしてaliasを作ればok。
 
 Bukkitにはない機能としては、タブ補完機能があります。
@@ -25,6 +27,8 @@ aliases:
 --- 
 
 This is plugin that adds bukkit's command alias function (that is configured in commands.yml).
+
+Download from [here](https://github.com/okocraft/BungeeCommandAliases/releases). Choose newest version :)
 
 To use this plugin, drop jar into plugins folder and restart the proxy. After that, BungeeCommandAliases/commands.yml will be generated in plugins folder. Configure the commands.yml. You can refer to [this page](https://www.spigotmc.org/go/commands-yml).
 
