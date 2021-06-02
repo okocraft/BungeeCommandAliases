@@ -2,6 +2,7 @@ package net.okocraft.bungeecommandaliases.command;
 
 import java.util.Objects;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
@@ -20,7 +21,7 @@ public class ReloadAliases extends Command {
     public void execute(CommandSender sender, String[] args) {
         plugin.onDisable();
         plugin.onEnable();
-        sender.sendMessage(new TextComponent("BungeeCommandAliases has been reloaded!"));
+        sender.sendMessage(new TextComponent(ChatColor.GREEN + "Bungeecord command aliases successfully reloaded."));
     }
 
 
