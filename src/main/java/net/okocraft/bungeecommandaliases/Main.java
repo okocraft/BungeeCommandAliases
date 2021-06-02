@@ -46,6 +46,9 @@ public class Main extends Plugin {
         return this;
     }
     
+    public boolean isAliasesLoaded() {
+        return aliasesLoaded;
+    }
 
     public Main() {
         commandConfig = new CommandConfig(this);
@@ -109,7 +112,7 @@ public class Main extends Plugin {
             // prevent confliction with other plugin command with the same name.
             getProxy().getScheduler().schedule(this, () -> {
                     commandAliases.forEach((aliasName, alias) -> getProxy().getPluginManager().registerCommand(this, alias));
-            }, 20L, TimeUnit.SECONDS);
+            }, 10L, TimeUnit.SECONDS);
             aliasesLoaded = true;
         }
     }
