@@ -23,8 +23,9 @@ public class ReloadAliases extends Command {
             plugin.onDisable();
             plugin.onEnable();
             sender.sendMessage(new TextComponent(ChatColor.GREEN + "Bungeecord command aliases successfully reloaded."));
+        } else {
+            sender.sendMessage(new TextComponent(ChatColor.RED + "Bungeecord command aliases is not loaded yet."));
         }
-        sender.sendMessage(new TextComponent(ChatColor.RED + "Bungeecord command aliases is not loaded yet."));
     }
 
 
