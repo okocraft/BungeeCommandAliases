@@ -42,3 +42,5 @@ aliases:
 
 `sendtohub <player>` will be completed via `$$1` variable from child command `send $$1 hub`.
 If you set multiple child commands, every child command's tab completion result will be shown for alias.
+
+When you want to reload commands.yml, use `/reloadaliases` (permission: `bungeecommandaliases.reload`).
