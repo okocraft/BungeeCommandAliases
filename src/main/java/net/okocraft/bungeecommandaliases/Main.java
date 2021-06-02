@@ -1,6 +1,7 @@
 package net.okocraft.bungeecommandaliases;
 
 import net.okocraft.bungeecommandaliases.command.CommandAlias;
+import net.okocraft.bungeecommandaliases.command.ReloadAliases;
 import net.okocraft.bungeecommandaliases.config.CommandConfig;
 
 import java.lang.reflect.Field;
@@ -17,6 +18,8 @@ import net.md_5.bungee.api.plugin.PluginManager;
 public class Main extends Plugin {
 
     private final CommandConfig commandConfig;
+
+    private final ReloadAliases reloadCommand;
 
     private final Map<String, CommandAlias> commandAliases = new HashMap<>();
     private final Map<String, Map.Entry<Plugin, Command>> conflictingCommands = new HashMap<>();
@@ -42,6 +45,7 @@ public class Main extends Plugin {
 
     public Main() {
         commandConfig = new CommandConfig(this);
+        reloadCommand = new ReloadAliases(this);
     }
 
     @Override
@@ -49,6 +53,10 @@ public class Main extends Plugin {
         Map<String, Command> registeredCommands = new HashMap<>();
         for (Map.Entry<String, Command> entry : getProxy().getPluginManager().getCommands()) {
             registeredCommands.put(entry.getKey(), entry.getValue());
+        }
+
+        if (!registeredCommands.containsValue(reloadCommand)) {
+            getProxy().getPluginManager().registerCommand(this, reloadCommand);
         }
 
         commandConfig.saveDefault();
@@ -84,6 +92,9 @@ public class Main extends Plugin {
     @Override
     public void onDisable() {
         commandAliases.keySet().forEach(this::disableAlias);
+        commandAliases.clear();
+        conflictingCommands.clear();
+        
     }
 
     public CommandConfig getCommandConfig() {
