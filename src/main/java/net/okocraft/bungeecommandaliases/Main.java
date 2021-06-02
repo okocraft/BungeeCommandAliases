@@ -91,7 +91,7 @@ public class Main extends Plugin {
 
             for (String child : aliasesMap.get(aliasName)) {
                 String childName = child.split(" ", -1)[0];
-                if (!invalidChildren.contains(childName) && !getProxy().getPluginManager().isExecutableCommand(childName, getProxy().getConsole())) {
+                if (!invalidChildren.contains(childName) && !registeredCommands.containsKey(childName)) {
                     invalidChildren.add(childName);
                 }
             }
