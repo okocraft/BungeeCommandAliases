@@ -30,10 +30,10 @@ public class Main extends Plugin {
 
     private Plugin getOwningPlugin(Command command) {
         try {
-            Field commandByPlugin = PluginManager.class.getDeclaredField("commandByPlugin");
-            commandByPlugin.setAccessible(true);
+            Field commandsByPlugin = PluginManager.class.getDeclaredField("commandsByPlugin");
+            commandsByPlugin.setAccessible(true);
             @SuppressWarnings("unchecked")
-            Multimap<Plugin, Command> commandByPluginMap = (Multimap<Plugin, Command>) commandByPlugin.get(getProxy().getPluginManager());
+            Multimap<Plugin, Command> commandByPluginMap = (Multimap<Plugin, Command>) commandsByPlugin.get(getProxy().getPluginManager());
             for (Map.Entry<Plugin, Command> entry : commandByPluginMap.entries()) {
                 if (entry.getValue().equals(command)) {
                     return entry.getKey();
